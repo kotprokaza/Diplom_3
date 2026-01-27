@@ -1,3 +1,4 @@
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026
 package com.stellarburgers.tests;
 
 import com.stellarburgers.BaseTest;
@@ -160,3 +161,4 @@ public class SuccessfulRegistrationTest extends BaseTest {
         }
     }
 }
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026

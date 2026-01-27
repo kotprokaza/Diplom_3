@@ -57,3 +57,7 @@ geckodriver.log
 *.zip
 *.tar.gz
 *.rar
+final_diplom_3_project/
+diplom_3_final_complete.zip
+target/
+.allure/

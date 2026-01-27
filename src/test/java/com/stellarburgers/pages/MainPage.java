@@ -1,3 +1,4 @@
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026
 package com.stellarburgers.pages;
 
 import io.qameta.allure.Step;
@@ -107,3 +108,4 @@ public class MainPage {
         return fillingsSection;
     }
 }
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026

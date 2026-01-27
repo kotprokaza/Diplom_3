@@ -1,3 +1,4 @@
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026
 package com.stellarburgers;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -94,3 +95,4 @@ public class BaseTest {
         }
     }
 }
+// Диплом 3: UI тесты Stellar Burgers - 27.01.2026
