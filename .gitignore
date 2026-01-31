@@ -61,3 +61,11 @@ final_diplom_3_project/
 diplom_3_final_complete.zip
 target/
 .allure/
+
+# Allure reports
+allure-results/
+allure-report/
+target/allure-results/
+target/allure-report/
+*.json
+*.txt

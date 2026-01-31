@@ -1,8 +1,12 @@
 package com.stellarburgers;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
 import org.junit.After;
 import org.junit.Before;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,6 +18,7 @@ public class BaseTest {
     protected WebDriverWait wait;
     
     @Before
+    @Step("Инициализация драйвера и открытие браузера")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         
@@ -29,9 +34,19 @@ public class BaseTest {
     }
     
     @After
+    @Step("Закрытие браузера")
     public void tearDown() {
         if (driver != null) {
+            takeScreenshot();
             driver.quit();
         }
+    }
+    
+    @Attachment(value = "Скриншот", type = "image/png")
+    public byte[] takeScreenshot() {
+        if (driver != null) {
+            return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        }
+        return new byte[0];
     }
 }
