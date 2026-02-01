@@ -69,3 +69,5 @@ target/allure-results/
 target/allure-report/
 *.json
 *.txt
+target/allure-results/
+target/allure-report/

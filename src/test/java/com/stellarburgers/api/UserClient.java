@@ -7,7 +7,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 
 public class UserClient {
-    private static final String BASE_URL = "https://stellarburgers.nomoreparties.site/api";
+    private static final String BASE_URL = "https://stellarburgers.education-services.ru/api";
     
     public static Map<String, String> createRandomUser() {
         RestAssured.baseURI = BASE_URL;

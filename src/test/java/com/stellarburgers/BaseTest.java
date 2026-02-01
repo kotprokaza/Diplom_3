@@ -31,6 +31,9 @@ public class BaseTest {
         
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().window().maximize();
+        
+        // ОТКРЫВАЕМ ПРАВИЛЬНЫЙ URL
+        driver.get("https://stellarburgers.education-services.ru");
     }
     
     @After
