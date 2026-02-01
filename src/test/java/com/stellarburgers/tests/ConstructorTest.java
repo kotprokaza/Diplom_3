@@ -3,45 +3,54 @@ package com.stellarburgers.tests;
 import com.stellarburgers.BaseTest;
 import com.stellarburgers.Constants;
 import com.stellarburgers.pages.MainPage;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
+
 import static org.junit.Assert.assertTrue;
 
+@DisplayName("Тесты конструктора бургеров")
 public class ConstructorTest extends BaseTest {
-    
+
     @Test
+    @DisplayName("Переключение на раздел 'Булки'")
+    @Description("Тест проверяет, что при клике на раздел 'Булки' он становится активным")
     public void switchToBunsSection() {
         driver.get(Constants.BASE_URL);
         MainPage mainPage = new MainPage(driver);
         
         mainPage.clickBunsSection();
         
-        // Используем WebDriverWait вместо Thread.sleep()
-        wait.until(driver -> mainPage.isBunsSectionActive());
-        assertTrue("Раздел 'Булки' должен быть активным", 
-                   mainPage.isBunsSectionActive());
+        // Ожидания внутри метода clickBunsSection()
+        assertTrue("Раздел 'Булки' должен быть активным",
+                mainPage.isBunsSectionActive());
     }
     
     @Test
+    @DisplayName("Переключение на раздел 'Соусы'")
+    @Description("Тест проверяет, что при клике на раздел 'Соусы' он становится активным")
     public void switchToSaucesSection() {
         driver.get(Constants.BASE_URL);
         MainPage mainPage = new MainPage(driver);
         
         mainPage.clickSaucesSection();
         
-        wait.until(driver -> mainPage.isSaucesSectionActive());
-        assertTrue("Раздел 'Соусы' должен быть активным", 
-                   mainPage.isSaucesSectionActive());
+        // Ожидания внутри метода clickSaucesSection()
+        assertTrue("Раздел 'Соусы' должен быть активным",
+                mainPage.isSaucesSectionActive());
     }
     
     @Test
+    @DisplayName("Переключение на раздел 'Начинки'")
+    @Description("Тест проверяет, что при клике на раздел 'Начинки' он становится активным")
     public void switchToFillingsSection() {
         driver.get(Constants.BASE_URL);
         MainPage mainPage = new MainPage(driver);
         
         mainPage.clickFillingsSection();
         
-        wait.until(driver -> mainPage.isFillingsSectionActive());
-        assertTrue("Раздел 'Начинки' должен быть активным", 
-                   mainPage.isFillingsSectionActive());
+        // Ожидания внутри метода clickFillingsSection()
+        assertTrue("Раздел 'Начинки' должен быть активным",
+                mainPage.isFillingsSectionActive());
     }
 }

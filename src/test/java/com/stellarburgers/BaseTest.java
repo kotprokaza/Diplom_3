@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 
 public class BaseTest {
@@ -25,15 +26,14 @@ public class BaseTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
         
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().window().maximize();
-        
-        // ОТКРЫВАЕМ ПРАВИЛЬНЫЙ URL
-        driver.get("https://stellarburgers.education-services.ru");
+        // НЕ открываем URL здесь - тесты сами открывают нужные страницы
     }
     
     @After
