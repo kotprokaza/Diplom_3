@@ -2,108 +2,100 @@ package com.stellarburgers.pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
 public class MainPage {
-    
     private final WebDriver driver;
+    private final WebDriverWait wait;
+    private final JavascriptExecutor js;
     
     // Локаторы
     private final By loginButton = By.xpath(".//button[text()='Войти в аккаунт']");
-    private final By personalAccountButton = By.xpath(".//p[text()='Личный Кабинет']");
-    private final By constructorButton = By.xpath(".//p[text()='Конструктор']");
-    private final By logoButton = By.xpath(".//div[@class='AppHeader_header__logo__2D0X2']");
-    private final By orderFeedButton = By.xpath(".//p[text()='Лента Заказов']");
+    private final By personalAccountButton = By.xpath(".//p[text()='Личный Кабинет']/parent::a");
     
-    // Разделы конструктора
-    private final By bunsSection = By.xpath(".//span[text()='Булки']/parent::div");
-    private final By saucesSection = By.xpath(".//span[text()='Соусы']/parent::div");
-    private final By fillingsSection = By.xpath(".//span[text()='Начинки']/parent::div");
+    // Упрощенные локаторы для разделов - только span
+    private final By bunsSection = By.xpath(".//span[text()='Булки']");
+    private final By saucesSection = By.xpath(".//span[text()='Соусы']");
+    private final By fillingsSection = By.xpath(".//span[text()='Начинки']");
     
-    // Активный раздел
-    private final By activeTab = By.xpath(".//div[contains(@class, 'tab_tab_type_current')]");
+    private final By activeSection = By.xpath(".//div[contains(@class, 'tab_tab_type_current')]");
     
     public MainPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.js = (JavascriptExecutor) driver;
     }
     
     @Step("Нажать кнопку 'Войти в аккаунт'")
     public void clickLoginButton() {
-        driver.findElement(loginButton).click();
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(loginButton));
+        element.click();
     }
     
-    @Step("Нажать кнопку 'Личный Кабинет'")
+    @Step("Нажать кнопку 'Личный кабинет'")
     public void clickPersonalAccountButton() {
-        driver.findElement(personalAccountButton).click();
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(personalAccountButton));
+        element.click();
     }
     
-    @Step("Нажать кнопку 'Конструктор'")
-    public void clickConstructorButton() {
-        driver.findElement(constructorButton).click();
-    }
-    
-    @Step("Нажать на логотип")
-    public void clickLogo() {
-        driver.findElement(logoButton).click();
-    }
-    
-    @Step("Перейти в раздел 'Булки'")
+    @Step("Нажать раздел 'Булки'")
     public void clickBunsSection() {
-        driver.findElement(bunsSection).click();
-        waitForSectionToBeActive("Булки");
+        // Ищем элемент по тексту
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(bunsSection));
+        // Прокручиваем к элементу
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        // Используем JavaScript клик
+        js.executeScript("arguments[0].click();", element);
+        waitForSectionActive("Булки");
     }
     
-    @Step("Перейти в раздел 'Соусы'")
+    @Step("Нажать раздел 'Соусы'")
     public void clickSaucesSection() {
-        driver.findElement(saucesSection).click();
-        waitForSectionToBeActive("Соусы");
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(saucesSection));
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        js.executeScript("arguments[0].click();", element);
+        waitForSectionActive("Соусы");
     }
     
-    @Step("Перейти в раздел 'Начинки'")
+    @Step("Нажать раздел 'Начинки'")
     public void clickFillingsSection() {
-        driver.findElement(fillingsSection).click();
-        waitForSectionToBeActive("Начинки");
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(fillingsSection));
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        js.executeScript("arguments[0].click();", element);
+        waitForSectionActive("Начинки");
     }
     
-    @Step("Проверить что активен раздел '{sectionName}'")
-    public boolean isSectionActive(String sectionName) {
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-            .until(ExpectedConditions.visibilityOfElementLocated(activeTab));
-        
-        String activeText = driver.findElement(activeTab).getText();
-        return activeText.contains(sectionName);
+    @Step("Проверить что активен раздел 'Булки'")
+    public boolean isBunsSectionActive() {
+        return isSectionActive("Булки");
     }
     
-    private void waitForSectionToBeActive(String sectionName) {
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-            .until(driver -> isSectionActive(sectionName));
+    @Step("Проверить что активен раздел 'Соусы'")
+    public boolean isSaucesSectionActive() {
+        return isSectionActive("Соусы");
     }
     
-    @Step("Открыть главную страницу")
-    public void open() {
-        driver.get("https://stellarburgers.education-services.ru");
-        waitForPageLoad();
+    @Step("Проверить что активен раздел 'Начинки'")
+    public boolean isFillingsSectionActive() {
+        return isSectionActive("Начинки");
     }
     
-    private void waitForPageLoad() {
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-            .until(ExpectedConditions.visibilityOfElementLocated(loginButton));
+    private boolean isSectionActive(String sectionName) {
+        try {
+            WebElement active = wait.until(ExpectedConditions.presenceOfElementLocated(activeSection));
+            return active.getText().contains(sectionName);
+        } catch (Exception e) {
+            return false;
+        }
     }
     
-    // Геттеры для локаторов (для использования в тестах)
-    public By getBunsLocator() {
-        return bunsSection;
-    }
-    
-    public By getSaucesLocator() {
-        return saucesSection;
-    }
-    
-    public By getFillingsLocator() {
-        return fillingsSection;
+    private void waitForSectionActive(String sectionName) {
+        wait.until(driver -> isSectionActive(sectionName));
     }
 }
