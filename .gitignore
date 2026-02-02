@@ -27,7 +27,6 @@ Thumbs.db
 # Allure
 .allure/
 allure-results/
-allure-report/
 
 # Logs
 *.log
@@ -64,10 +63,7 @@ target/
 
 # Allure reports
 allure-results/
-allure-report/
 target/allure-results/
-target/allure-report/
 *.json
 *.txt
 target/allure-results/
-target/allure-report/
