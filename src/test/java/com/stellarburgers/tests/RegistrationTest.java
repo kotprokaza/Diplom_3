@@ -2,32 +2,15 @@ package com.stellarburgers.tests;
 
 import com.stellarburgers.BaseTest;
 import com.stellarburgers.Constants;
-import com.stellarburgers.api.User;
-import com.stellarburgers.api.UserClient;
-import com.stellarburgers.pages.RegisterPage;
+import com.stellarburgers.pages.*;
 import io.qameta.allure.Description;
-import io.qameta.allure.junit4.DisplayName;
-import org.junit.After;
 import org.junit.Test;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static org.junit.Assert.assertTrue;
 
-@DisplayName("Тесты регистрации пользователя")
 public class RegistrationTest extends BaseTest {
     
-    private User registeredUser;
-    
-    @After
-    @DisplayName("Удаление зарегистрированного пользователя")
-    public void tearDownRegisteredUser() {
-        if (registeredUser != null && registeredUser.getAccessToken() != null) {
-            UserClient.deleteUser(registeredUser.getAccessToken());
-        }
-    }
-    
     @Test
-    @DisplayName("Успешная регистрация с валидным паролем")
     @Description("Тест проверяет успешную регистрацию пользователя с корректными данными")
     public void successfulRegistrationWithValidPassword() {
         String timestamp = String.valueOf(System.currentTimeMillis());
@@ -35,45 +18,44 @@ public class RegistrationTest extends BaseTest {
         String email = "test" + timestamp + "@example.com";
         String password = "Password123!";
         
+        // Открываем страницу регистрации
         driver.get(Constants.REGISTER_URL);
         RegisterPage registerPage = new RegisterPage(driver);
+        
+        // Проверяем что открыта страница регистрации (используем метод Page Object)
+        assertTrue("Страница регистрации не отображается",
+                   registerPage.isRegisterPageDisplayed());
+        
+        // Регистрируем пользователя (используем метод Page Object)
         registerPage.register(name, email, password);
         
-        wait.until(ExpectedConditions.urlContains("/login"));
-        
-        assertTrue("После успешной регистрации должен быть редирект на страницу логина",
-                driver.getCurrentUrl().contains("/login"));
-        
-        // Сохраняем пользователя для последующего удаления
-        registeredUser = new User(email, password, name);
-        // Пытаемся получить токен через API
-        User tempUser = UserClient.createRandomUser();
-        if (tempUser.getAccessToken() != null && !tempUser.getAccessToken().isEmpty()) {
-            registeredUser.setAccessToken(tempUser.getAccessToken());
-        }
+        // Проверяем успешную регистрацию через переход на страницу логина
+        LoginPage loginPage = new LoginPage(driver);
+        assertTrue("После регистрации не открылась страница логина",
+                   loginPage.isLoginPageDisplayed());
     }
     
     @Test
-    @DisplayName("Ошибка регистрации с коротким паролем")
-    @Description("Тест проверяет, что регистрация с паролем менее 6 символов завершается ошибкой")
-    public void registrationFailsWithShortPassword() {
+    @Description("Тест проверяет отображение ошибки при регистрации с коротким паролем")
+    public void registrationErrorWithShortPassword() {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String name = "Тестовый" + timestamp;
         String email = "test" + timestamp + "@example.com";
-        String shortPassword = "12345";
+        String shortPassword = "123";
         
+        // Открываем страницу регистрации
         driver.get(Constants.REGISTER_URL);
         RegisterPage registerPage = new RegisterPage(driver);
+        
+        // Проверяем что открыта страница регистрации
+        assertTrue("Страница регистрации не отображается",
+                   registerPage.isRegisterPageDisplayed());
+        
+        // Регистрируем пользователя с коротким паролем
         registerPage.register(name, email, shortPassword);
         
-        // Ждем проверки пароля
-        wait.until(driver -> {
-            boolean stillOnRegisterPage = driver.getCurrentUrl().contains("/register");
-            boolean errorDisplayed = registerPage.isPasswordErrorDisplayed();
-            return stillOnRegisterPage || errorDisplayed;
-        });
-        
-        assertTrue("При коротком пароле должны остаться на странице регистрации или отображаться ошибка",
-                driver.getCurrentUrl().contains("/register") || registerPage.isPasswordErrorDisplayed());
+        // Проверяем отображение ошибки пароля
+        assertTrue("Ошибка пароля не отображается",
+                   registerPage.isPasswordErrorDisplayed());
     }
 }

@@ -10,6 +10,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -21,19 +24,60 @@ public class BaseTest {
     @Before
     @Step("Инициализация драйвера и открытие браузера")
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
+        String browser = System.getProperty("browser", "chrome").toLowerCase();
         
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-allow-origins=*");
+        switch (browser) {
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.addArguments("--no-sandbox");
+                firefoxOptions.addArguments("--disable-dev-shm-usage");
+                driver = new FirefoxDriver(firefoxOptions);
+                break;
+                
+            case "safari":
+                // Safari не требует WebDriverManager на macOS
+                driver = new SafariDriver();
+                break;
+                
+            case "yandex":
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions yandexOptions = new ChromeOptions();
+                
+                // Определяем ОС для пути к Яндекс.Браузеру
+                String os = System.getProperty("os.name").toLowerCase();
+                if (os.contains("win")) {
+                    // Windows
+                    yandexOptions.setBinary("C:\\Users\\" + System.getProperty("user.name") + 
+                                           "\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe");
+                } else if (os.contains("mac")) {
+                    // macOS
+                    yandexOptions.setBinary("/Applications/Yandex.app/Contents/MacOS/Yandex");
+                } else if (os.contains("linux") || os.contains("unix")) {
+                    // Linux
+                    yandexOptions.setBinary("/usr/bin/yandex-browser");
+                }
+                
+                yandexOptions.addArguments("--no-sandbox");
+                yandexOptions.addArguments("--disable-dev-shm-usage");
+                yandexOptions.addArguments("--remote-allow-origins=*");
+                driver = new ChromeDriver(yandexOptions);
+                break;
+                
+            case "chrome":
+            default:
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--no-sandbox");
+                chromeOptions.addArguments("--disable-dev-shm-usage");
+                chromeOptions.addArguments("--remote-allow-origins=*");
+                driver = new ChromeDriver(chromeOptions);
+                break;
+        }
         
-        driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.manage().window().maximize();
-        // НЕ открываем URL здесь - тесты сами открывают нужные страницы
     }
     
     @After
